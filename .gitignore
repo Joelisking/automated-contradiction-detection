@@ -1,0 +1,11 @@
+# Model files (too large for GitHub)
+*.joblib
+*.safetensors
+*.bin
+bert_best/
+bert_checkpoints/
+
+# Data
+*.parquet
+__pycache__/
+.ipynb_checkpoints/
