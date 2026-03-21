@@ -6,6 +6,7 @@ Fine-tunes bert-base-uncased on SNLI using HuggingFace Trainer.
 
 import os
 import time
+import glob
 import numpy as np
 from transformers import (
     AutoTokenizer,
@@ -104,7 +105,18 @@ def train_bert(train_dataset, val_dataset):
     )
 
     start = time.time()
-    trainer.train()
+
+    # Check for existing checkpoints (resume if training was interrupted)
+    checkpoint_dir = os.path.join(config.MODELS_DIR, "bert_checkpoints")
+    checkpoints = sorted(glob.glob(os.path.join(checkpoint_dir, "checkpoint-*")))
+    resume_from = None
+    if checkpoints:
+        resume_from = checkpoints[-1]
+        print(f"  Resuming from checkpoint: {resume_from}")
+    else:
+        print("  No checkpoints found. Training from scratch.")
+
+    trainer.train(resume_from_checkpoint=resume_from)
     elapsed = time.time() - start
     print(f"  Training time: {elapsed:.1f}s ({elapsed/60:.1f} min)")
 
